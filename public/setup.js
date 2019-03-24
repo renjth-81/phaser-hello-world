@@ -12,7 +12,7 @@ function preload() {
 var platforms;
 var player;
 var cursors;
-
+var stars;
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -35,7 +35,7 @@ function create() {
     ground.body.immovable = true;
 
     //  Now let's create two ledges
-    var ledge1 = platforms.create(400, 400, 'ground');
+    var ledge1 = platforms.create(400, 470, 'ground');
 
     ledge1.body.immovable = true;
 
@@ -50,7 +50,9 @@ function create() {
 
     //  Player physics properties. Give the little guy a slight bounce.
     player.body.bounce.y = 0.2;
-    player.body.gravity.y = 300;
+    player.body.gravity.y = 450;
+    player.body.acceleration.y = 460;
+
     player.body.collideWorldBounds = true;
 
     //  Our two animations, walking left and right.
@@ -59,24 +61,40 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
 
+    // create stars
+    stars = game.add.group();
+    stars.enableBody = true;
+
+    for (var i = 0; i < 12; i++) {
+        var star = stars.create(i * 70, 0, 'star');
+        star.body.gravity.y = 0.6;
+        star.body.bounce.y = 0.7 + Math.random() * 0.2;
+
+    }
 }
 
 function update() {
     //  Collide the player and the stars with the platforms
     var hitPlatform = game.physics.arcade.collide(player, platforms);
-    
+
+    // check if stars collide with platforms
+    game.physics.arcade.collide(stars,platforms);
+
+    // if player collides with stars, call collectStar function
+    game.physics.arcade.overlap(player,stars,collectStar,null,this);
+
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
 
     if (cursors.left.isDown) {
         //  Move to the left
-        player.body.velocity.x = -150;
+        player.body.velocity.x = -250;
 
         player.animations.play('left');
     }
     else if (cursors.right.isDown) {
         //  Move to the right
-        player.body.velocity.x = 150;
+        player.body.velocity.x = 250;
 
         player.animations.play('right');
     }
@@ -89,7 +107,12 @@ function update() {
 
     //  Allow the player to jump if they are touching the ground.
     if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
-        player.body.velocity.y = -300;
+        player.body.velocity.y = -350;
     }
 
+}
+
+function collectStar (player,star){
+    // remove star from screen
+    star.kill();
 }
