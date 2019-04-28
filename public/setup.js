@@ -2,7 +2,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 
 function preload() {
     game.load.crossOrigin = 'anonymous';
-    game.load.image('sky', 'assets/sky.png');
+    // game.load.image('sky', 'assets/sky.png');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
@@ -17,7 +17,7 @@ var stars;
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     // background sprite is sky
-    game.add.sprite(0, 0, 'sky');
+    //game.add.sprite(0, 0, 'sky');
 
     // group all ledges under one object  - platforms
     platforms = game.add.group();
@@ -71,6 +71,12 @@ function create() {
         star.body.bounce.y = 0.7 + Math.random() * 0.2;
 
     }
+
+    // light
+    // Create the point light
+    const light = new PIXI.lights.PointLight(0xffffff, 1);
+    light.x = 300;
+    light.y = 400;
 }
 
 function update() {
@@ -78,10 +84,10 @@ function update() {
     var hitPlatform = game.physics.arcade.collide(player, platforms);
 
     // check if stars collide with platforms
-    game.physics.arcade.collide(stars,platforms);
+    game.physics.arcade.collide(stars, platforms);
 
     // if player collides with stars, call collectStar function
-    game.physics.arcade.overlap(player,stars,collectStar,null,this);
+    game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
@@ -112,7 +118,7 @@ function update() {
 
 }
 
-function collectStar (player,star){
+function collectStar(player, star) {
     // remove star from screen
     star.kill();
 }
